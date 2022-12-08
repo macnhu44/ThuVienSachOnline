@@ -1,0 +1,99 @@
+{% extends 'main.html' %} 
+{% load static %}
+{% block content%}
+{% load crispy_forms_tags %}
+<div class="container-fluid text-center"><h2>SỬA SÁCH</h2></div>
+</br>
+<form action="" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="row justify-content-center">
+    <div class="col-6">
+
+      <div class="row">
+        <div class="col-6">{{form.name|as_crispy_field}}</div>
+        <div class="col-6">{{form.author|as_crispy_field}}</div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">{{form.description|as_crispy_field}}</div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">{{form.release_date|as_crispy_field}}</div>
+        <div class="col-6">{{form.number_of_pages|as_crispy_field}}</div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">{{form.category|as_crispy_field}}</div>
+      </div>
+
+      {% comment %} <input class="btn btn-secondary" type="button" value="Bỏ" />
+      <input class="btn btn-primary" type="submit" value="Lưu" /> {% endcomment %}
+    </div>
+
+    <div class="col-4">
+      <div class="row justify-content-center">
+        <div class="col-9 justify-content-center" onchange="readURL(this);">
+          {{form.image|as_crispy_field}}
+          
+          {% if book.image %}
+            <img
+              id="blah"
+              src="{{book.image.url}}"
+              style="width: 450px"
+              alt="Ảnh bìa của sách"
+            />
+          {% endif %}
+
+          {% if not book.image %}
+            <img
+              id="blah"
+              src="#"
+              style="width: 450px"
+              alt="Ảnh bìa của sách"
+            />
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  </br>
+  </br>
+  </br>
+
+  <hr>
+  
+  <div class="row">
+    <div class="col-8"></div>
+    <div class="col-4">
+      <div class="row">
+        <div class="col-1"></div>
+        {% comment %} <input class="btn btn-secondary col-2" type="button" value="Bỏ" /> {% endcomment %}
+        <a
+          class="btn btn-secondary col-2"
+          href="{% url 'viewBook' book.id %}"
+          >Hủy</a
+        >
+        <div class="col-1"></div>
+        <input class="btn btn-primary col-2" type="submit" value="Lưu" />
+        <div class="col-5"></div>
+      </div>
+    </div>
+  </div>
+</form>
+<script>
+  function readURL(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        $("#blah").attr("src", e.target.result).width(450);
+      };
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+{%endblock %}

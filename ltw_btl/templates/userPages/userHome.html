@@ -1,0 +1,102 @@
+{% extends 'main.html' %} {% block content%}
+
+<div class="container-fluid text-center">
+  <div><h2>THƯ VIỆN ONLINE</h2></div>
+  <div class="row">
+    <div class="col-1">
+      <a class="btn btn-success" href="{%url 'addBook'%}"> Thêm </a>
+    </div>
+    <div class="col-11">
+    </div>
+  </div>
+  <br />
+  <div>
+    <table class="table table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>TIÊU ĐỀ</th>
+          <th>TÁC GIẢ</th>
+          <th>THỂ LOẠI</th>
+          <th>NGÀY PHÁT HÀNH</th>
+          <th>SỐ TRANG</th>
+          <th>HÀNH ĐỘNG</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for book in books %}
+        <tr>
+          <td>{{book.name}}</td>
+          <td>{{book.author}}</td>
+          <td>{{book.category}}</td>
+          <td>{{book.release_date}}</td>
+          <td>{{book.number_of_pages}}</td>
+          <td>
+            <a href="{% url 'viewBook' book.id %}" class="btn btn-primary btn_action"
+              >Xem</a
+            >
+
+            <a
+              href="{% url 'deleteBook' book.id %}"
+              class="btn btn-danger btn_action"
+              data-toggle="modal"
+              data-target="#exampleModal{{book.id}}"
+              onclick="deleteBook('{{book.name}}')"
+              >Xóa</a
+            >
+
+            <div
+              class="modal fade"
+              id="exampleModal{{book.id}}"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">XÁC NHẬN</h5>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Bạn chắc chắn muốn xóa sách <strong>{{ book.name }}</strong> chứ?
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                    >
+                      Không
+                    </button>
+                    <a
+                      class="btn btn-danger"
+                      href="{% url 'deleteBook' book.id %}"
+                      >Xóa</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  function deleteBook(bookName) {
+    console.log("Xác nhận xóa sách '" + bookName + "'");
+  }
+</script>
+{% endblock %}

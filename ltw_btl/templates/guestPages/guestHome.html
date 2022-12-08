@@ -1,0 +1,32 @@
+{% extends 'main.html' %} {% block content%}
+
+<div class="container-fluid text-center">
+  <div><h2>THƯ VIỆN ONLINE</h2></div>
+  <div>
+    <table class="table table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>TIÊU ĐỀ</th>
+          <th>TÁC GIẢ</th>
+          <th>THỂ LOẠI</th>
+          <th>NGÀY PHÁT HÀNH</th>
+          <th>SỐ TRANG</th>
+          <th>HÀNH ĐỘNG</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for book in books %}
+        <tr>
+          <td>{{book.name}}</td>
+          <td>{{book.author}}</td>
+          <td>{{book.category}}</td>
+          <td>{{book.release_date}}</td>
+          <td>{{book.number_of_pages}}</td>
+          <td></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

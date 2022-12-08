@@ -1,0 +1,34 @@
+{% extends 'main.html' %} {% block content%}
+
+<div class="container-fluid text-center"><h2>KHÔI PHỤC MẬT KHẨU</h2></div>
+
+</br>
+
+<div class="d-flex justify-content-center form_container">
+    <form method="POST" action="">
+        {% csrf_token %}
+        
+        <div class="form-row">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Nhập mã khôi phục.." >
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center mt-3 login_container">
+            <input id="myCheck" class="btn btn-primary" type="submit" value="Xác nhận">
+                <a class="" href="{% url 'confirmCodeMail' %}"></a>
+            </input>
+            <a class="" href="{% url 'confirmCodeMail' %}">OK</a>
+        </div>
+    </form>
+
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+        <p id='messages_error'>{{message}}</p>
+        {% else %}
+        <p id='messages_success'>{{message}}</p>
+        {% endif %}
+    {% endfor %}
+</div>
+
+{% endblock %}

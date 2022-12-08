@@ -1,0 +1,82 @@
+<style>
+  .loiChao {
+    font-size: 16px;
+    color: #fff;
+    margin-right: 20px;
+  }
+
+  .topbar-divider {
+    width: 0px;
+    border-right: 1px solid #e3e6f0;
+    height: calc(3.8rem - 2rem);
+    margin: auto 1rem;
+    opacity: 0.3;
+  }
+
+  .img-profile {
+    height: 2rem;
+    width: 2rem;
+  }
+
+  @media (max-width: 992px) {
+    .topbar-divider {
+        display: none !important;
+    }
+    .nav-item {
+      margin: inherit !important;
+    }
+  }
+    
+</style>
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="{% url 'userHome' %}">Navbar</a>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarNav"
+    aria-controls="navbarNav"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'userHome' %}"
+          >Dashboard <span class="sr-only">(current)</span></a
+        >
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'statisticalBook' %}">Thống kê</a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav">
+      <li style="margin: auto;" class="nav-item active justify-content-center">
+        
+        <a class="nav-link" href="{% url 'profileUser' %}"
+          >
+          Chào, {{request.user.username}}! <span class="sr-only">(current)</span>
+          <img
+            style="margin-left: 5px;"
+            class="img-profile rounded-circle"
+            src="/undraw_profile_2.svg"
+          />
+          </a>
+      </li>
+
+      <div class="topbar-divider"></div>
+
+      <li style="margin: auto;" class="nav-item active">
+        <a class="nav-link" href="{% url 'logout' %}"
+          >Đăng xuất<span class="sr-only">(current)</span></a
+        >
+      </li>
+    </ul>
+  </div>
+  {% comment %} <span class="loiChao">Hello, {{request.user.username}}!</span>
+  <span class="loiChao"><a href={% url 'logout' %}>Đăng xuất</a></span> {% endcomment %}
+</nav>

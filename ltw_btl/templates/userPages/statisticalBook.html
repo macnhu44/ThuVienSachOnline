@@ -1,0 +1,80 @@
+{% extends 'main.html' %} 
+{% load static %}
+{% block content%}
+{% load crispy_forms_tags %}
+<div class="container-fluid text-center"><h2>THỐNG KÊ</h2></div>
+
+<div style="width: 900px;" class="container-fluid text-center justify-content-between">
+    <canvas id="myChart_Bar"></canvas>
+</div>
+
+</br>
+</br>
+</br>
+
+<div style="width: 500px;" class="container-fluid text-center justify-content-between">
+    <canvas id="myChart_Pie"></canvas>
+</div>
+
+</br>
+</br>
+</br>
+
+
+<hr>
+  
+<div class="row justify-content-center">
+    <a
+        class="btn btn-secondary col-1"
+        href="{% url 'userHome' %}"
+        >Quay lại</a
+    >
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx_bar = document.getElementById('myChart_Bar');
+    console.log({{amount}})
+    new Chart(ctx_bar, {
+        type: 'bar',
+        data: {
+        labels: {{category|safe}},
+        datasets: [{
+            label: 'Thống kê số lượng sách theo thể loại sách trong thư viện',
+            data: {{amount|safe}},
+            borderWidth: 1
+        }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+        }
+    });
+
+    const ctx_pie = document.getElementById('myChart_Pie');
+    new Chart(ctx_pie, {
+        type: 'pie',
+        data: {
+        labels: {{category|safe}},
+        datasets: [{
+            label: 'Thống kê số lượng sách theo thể loại sách trong thư viện',
+            data: {{amount|safe}},
+            borderWidth: 1
+        }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{%endblock %}

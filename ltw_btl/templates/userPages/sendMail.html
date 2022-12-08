@@ -1,0 +1,44 @@
+{% extends 'main.html' %} {% block content%}
+
+
+
+<div class="container-fluid text-center"><h2>KHÔI PHỤC MẬT KHẨU</h2></div>
+
+</br>
+
+<div class="d-flex justify-content-center form_container">
+    <form method="POST" action="">
+        {% csrf_token %}
+        
+        <div class="input-group mb-2">
+            <div class="input-group-append">
+                <span class="input-group-text"><i class="fas fa-envelope-square"></i></span>
+            </div>
+            {{form.email}}
+        </div>
+
+        <div class="form-row justify-content-between">
+            <div class="d-flex justify-content-center mt-3 login_container pl-5">
+                <a class="btn btn-secondary" href="{% url 'profileUser' %}"
+                    >Hủy</a
+                >
+           </div>
+    
+            <div class="d-flex justify-content-center mt-3 login_container pr-5">
+                <input class="btn btn-primary" type="submit" value="Nhận mã">
+            </div>
+        </div>
+    </form>
+
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+        <p id='messages_error'>{{message}}</p>
+        {% else %}
+        <p id='messages_success'>{{message}}</p>
+        {% endif %}
+    {% endfor %}
+
+</div>
+
+
+{% endblock %}

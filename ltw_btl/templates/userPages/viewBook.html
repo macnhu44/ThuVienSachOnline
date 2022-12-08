@@ -1,0 +1,100 @@
+{% extends 'main.html' %} {% block content%} {% load crispy_forms_tags %}
+<div class="container-fluid text-center"><h2>XEM SÁCH</h2></div>
+</br>
+<form action="" method="POST">
+  <div class="row justify-content-center">
+    <div class="col-6">
+      {% csrf_token %}
+
+      <div class="row">
+        <div class="col-6">{{form.name|as_crispy_field}}</div>
+        <div class="col-6">{{form.author|as_crispy_field}}</div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">{{form.description|as_crispy_field}}</div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">{{form.release_date|as_crispy_field}}</div>
+        <div class="col-6">{{form.number_of_pages|as_crispy_field}}</div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">{{form.category|as_crispy_field}}</div>
+      </div>
+
+      
+    </div>
+
+    <div class="col-4">
+      <div class="row justify-content-center">
+        <div class="col-9 justify-content-center" onchange="readURL(this);">
+          {{form.image|as_crispy_field}}
+
+          {% if book.image %}
+            <img
+              id="blah"
+              src="{{book.image.url}}"
+              style="width: 450px"
+              alt="Ảnh bìa của sách"
+            />
+          {% endif %}
+
+          {% if not book.image %}
+            <img
+              id="blah"
+              src="#"
+              style="width: 450px"
+              alt="Ảnh bìa của sách"
+            />
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </br>
+  </br>
+  </br>
+
+  <hr>
+  
+  <div class="row">
+    <div class="col-8"></div>
+    <div class="col-4">
+      <div class="row">
+        <div class="col-1"></div>
+        <div class="col-1"></div>
+        <a
+          class="btn btn-secondary col-2"
+          href="{% url 'userHome' %}"
+          >Back</a
+        >
+        <div class="col-1"></div>
+        <a
+        class="col-2 btn btn-primary"
+        href="{% url 'editBook' book.id %}"
+        type="submit"
+        >Sửa</a
+      >
+        <div class="col-7"></div>
+      </div>
+    </div>
+  </div>
+</form>
+<script>
+  function readURL(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        $("#blah").attr("src", e.target.result).width(450);
+      };
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+{%endblock %}
