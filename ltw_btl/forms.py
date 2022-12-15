@@ -1,12 +1,15 @@
 from django.forms import ModelForm
 from .models import *
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AdminPasswordChangeForm
+from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import User
 from django import forms
 
 
 class addBookForm (ModelForm):
     image = forms.ImageField(widget=forms.FileInput, required=False)
+    
     class Meta:
         model  = Book
         fields = '__all__'
@@ -71,14 +74,21 @@ class sendMailForm (ModelForm):
         
 class confirmCodeMailForm (forms.Form):
     
-    key = forms.CharField(max_length=6)
-    # class Meta:
-    #     model  = User
-    #     fields = ['email']
-    #     labels = {
-    #         'email' : 'Email',
-    #     }
+    key = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Nhập mã xác thực...'}), 
+                          max_length=6, 
+                          required=True)
+        
         
     def __init__(self, *args, **kwargs):
         super (confirmCodeMailForm, self).__init__(*args, **kwargs)
         # self.fields['username'].disabled = True
+        
+
+class ResetPasswordForm (SetPasswordForm):
+        
+    def __init__(self, *args, **kwargs):
+        super (ResetPasswordForm, self).__init__(*args, **kwargs)
+        self.fields['new_password1'].label = "Nhập mật khẩu mới:"
+        self.fields['new_password2'].label = "Nhập lại mật khẩu:"
+        
+        

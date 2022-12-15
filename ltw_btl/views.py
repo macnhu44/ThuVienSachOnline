@@ -6,11 +6,17 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.core.mail import send_mail
 
+# from django.contrib.auth.forms
+
 from .models import *
 from .forms import *
 
 
 # Create your views here.
+
+
+
+#PHẦN XÁC THỰC NGƯỜI DÙNG
 def register (request):
     # Đã đăng nhập thì không mở page Login/Register được
     if request.user.is_authenticated:
@@ -20,13 +26,13 @@ def register (request):
         
         if request.method == "POST":
             
-            #Mật khẩu quá ngắn (< 8 ký tự)
+            # Mật khẩu quá ngắn (< 8 ký tự)
             pass_0 = request.POST.get('password1')
             if(len(pass_0) < 8):
                 messages.error(request, 'Mật khẩu ngắn hơn 8 ký tự!')
                 return redirect('register')  
             
-            #Không trùng mật khẩu
+            # Không trùng mật khẩu
             pass_1 = request.POST.get('password1')
             pass_2 = request.POST.get('password2')
             if pass_1 != pass_2:
@@ -34,7 +40,7 @@ def register (request):
                 
                 return redirect('register')  
             
-            #Log thông báo trùng username
+            # Log thông báo trùng username
             users = User.objects.all()
             for user in users:
                 username_X = request.POST.get('username')
@@ -43,12 +49,14 @@ def register (request):
                         
                     return redirect('register')   
             
-            #Username hợp lệ
+            # Nếu tất cả đều hợp lệ
             form = CreateUserForm(request.POST)
+            # print('----------CHECK FORM--------')
+            # print(form)
             
             if form.is_valid():
-                
-                
+                # print('----------CHECK VALID--------')
+                # print(form)
                 form.save()
                 
                 username = form.cleaned_data.get('username')
@@ -103,6 +111,8 @@ def getUserHome (request):
     return render( request, "userPages/userHome.html", {'books' : books})
 
 
+
+# PHẦN SÁCH
 @login_required(login_url='/login/')
 def addBook (request):
     form = addBookForm()
@@ -199,8 +209,7 @@ def deleteBook (request, pk):
     return redirect('http://localhost:8000/userhome/')
         
         
-        
-        
+  
 @login_required(login_url='/login/')
 def statisticalBook (request):
     categories = Book.objects.values('category').distinct()
@@ -225,27 +234,25 @@ def statisticalBook (request):
     return render(request, 'userPages/statisticalBook.html', context)
 
 
+
+
+# XEM THÔNG TIN NGƯỜI DÙNG
 @login_required(login_url='/login/')
 def profileUser (request):
     user = request.user
-    # user = {
-    #     'last_name': request.user.last_name,
-    #     'first_name': request.user.first_name,
-    #     'email': request.user.email,
-    # }
-    # print(type(user))
-    # print(user)
     
     form = profileUserForm(instance = user)
     print("FORM profileUser: ", form)
     # print(form)
-    # form.fields['username'].disabled = True
+    
     form.fields['email'].disabled = True  
     form.fields['first_name'].disabled = True  
     form.fields['last_name'].disabled = True  
     
     context = {'form': form}
     return render(request, 'userPages/profileUser.html', context)
+
+
 
 @login_required(login_url='/login/')
 def editUser (request):
@@ -279,6 +286,9 @@ def editUser (request):
     return render(request, 'userPages/editUser.html', context)
 
 
+
+
+# PHẦN THAY ĐỔI MẬT KHẨU
 @login_required(login_url='/login/')
 def sendMail (request):
     user = request.user
@@ -294,7 +304,7 @@ def sendMail (request):
         Key_part_2 = random.randrange(100, 999, 1)
         key = str(Key_part_1) + str(Key_part_2)
         
-        request.session['num'] = key
+        request.session['key'] = key
         
         msg = "Mã khôi phục mật khẩu: " + key
         print("MSG: ", msg)
@@ -311,7 +321,7 @@ def sendMail (request):
         # )
     
         
-        return render(request, 'userPages/confirmCodeMail.html')
+        return redirect('confirmCodeMail')
             
              
     context = {'form': form}
@@ -321,63 +331,63 @@ def sendMail (request):
 
 @login_required(login_url='/login/')
 def confirmCodeMail (request):
-    key = request.session.get('num')
-    print("KEYYYYY: ", key)
-    user = request.user
-    print("AAAAAAAAAAAAAAAAAA")
-    # email = user.email
     form = confirmCodeMailForm()
-    
-    # form.fields['email'].disabled = True   
     
     #START
     if request.method == "POST":
-        print(request.POST)
-        context = {
-            'form' : form,
-        }
-        return render(request, 'userPages/resetPassword.html', context)
-    
+        
+        input_key = request.POST.get('key')
+        print("----------------- input_key ----------------")
+        print(input_key)
+        
+        key = request.session['key']
+        print("----------------- key session ----------------")
+        print(key)
+        
+        if (len(input_key) == 6) and (input_key == key):
+            return redirect('resetPassword')
+        else:
+            messages.error(request, 'Mã xác nhận không trùng khớp!'+
+                             ' Vui lòng xác nhận lại!')
+            
+            return redirect('confirmCodeMail')
     
     context = {'form': form}
     return render(request, 'userPages/confirmCodeMail.html', context)  
+
 
 
 @login_required(login_url='/login/')
 def resetPassword (request):
     user = request.user
     
-    email = user.email
-    
-    form = profileUserForm(instance = user)
-    print(form)
-    
-    form.fields['email'].disabled = True   
-    
     #START
     if request.method == "POST":
-        
-        form = profileUserForm(request.POST, instance = user)
-        
-        print('------------------')
         print(request.POST)
+        form = ResetPasswordForm(user=user, data=request.POST)
+        # print(form)
         
         if form.is_valid():
-            key = "123456"
-            msg = "Mã khôi phục mật khẩu: " + key
             
-            send_mail(
-                'Khôi phục mật khẩu',
-                msg,
-                'abc@gmail.com',
-                [email],
-                fail_silently=True,
-            )
+            print('---------PASSWORD OK!---------')
+            tmp = form.clean_new_password2()
+            print(form.clean_new_password2())
+            if form.clean_new_password2():
+                form.save()
             
-            username = form.cleaned_data.get('username')
-            messages.success(request, 'Chỉnh sửa người dùng ' + username + ' thành công!')
             
-            return redirect('profileUser')
-    
+            username = user.username
+            password = tmp
+            user = authenticate(request, username = username, password = password)
+            
+            if user is not None:
+                auth_login(request, user)
+                messages.success(request, 'Thay đổi mật khẩu thành công!')
+                return redirect('profileUser')
+            
+    form = ResetPasswordForm(user=user)
+    print('---------FORM USER---------')
+    print(form)
+            
     context = {'form': form}
     return render(request, 'userPages/resetPassword.html', context)      
