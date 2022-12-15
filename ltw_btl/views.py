@@ -309,16 +309,16 @@ def sendMail (request):
         msg = "Mã khôi phục mật khẩu: " + key
         print("MSG: ", msg)
         
-        email = user.email
-        # Gửi mail
         
-        # send_mail(
-        #     '[Thuviensachonline.com] KHÔI PHỤC MẬT KHẨU!',
-        #     msg,
-        #     'abc@gmail.com',
-        #     [email],
-        #     fail_silently=True,
-        # )
+        # Gửi mail
+        email = user.email
+        send_mail(
+            '[Thuviensachonline.com] KHÔI PHỤC MẬT KHẨU!',
+            msg,
+            'abc@gmail.com',
+            [email],
+            fail_silently=True,
+        )
     
         
         return redirect('confirmCodeMail')
@@ -331,27 +331,30 @@ def sendMail (request):
 
 @login_required(login_url='/login/')
 def confirmCodeMail (request):
-    form = confirmCodeMailForm()
+    
+    key = request.session['key']
+    print("----------------- KEY IN SESSION ----------------")
+    print(key)
     
     #START
     if request.method == "POST":
         
         input_key = request.POST.get('key')
-        print("----------------- input_key ----------------")
+        print("----------------- INPUT KEY ----------------")
         print(input_key)
         
-        key = request.session['key']
-        print("----------------- key session ----------------")
-        print(key)
         
+        # Nhập mã xác nhận đúng
         if (len(input_key) == 6) and (input_key == key):
             return redirect('resetPassword')
+        # Nhập sai
         else:
             messages.error(request, 'Mã xác nhận không trùng khớp!'+
                              ' Vui lòng xác nhận lại!')
             
             return redirect('confirmCodeMail')
-    
+        
+    form = confirmCodeMailForm()
     context = {'form': form}
     return render(request, 'userPages/confirmCodeMail.html', context)  
 
@@ -364,20 +367,30 @@ def resetPassword (request):
     #START
     if request.method == "POST":
         print(request.POST)
+        # Truyền data input vào form
         form = ResetPasswordForm(user=user, data=request.POST)
         # print(form)
         
         if form.is_valid():
-            
             print('---------PASSWORD OK!---------')
-            tmp = form.clean_new_password2()
-            print(form.clean_new_password2())
+            
+            temp = form.clean_new_password2()
+            print('---------PASSWORD---------')
+            print(temp)
+            
+            # Xác nhận nhập 2 password hợp lệ và trùng nhau
             if form.clean_new_password2():
+                # OK
                 form.save()
+            else:
+                messages.success(request, 'Vui lòng nhập đúng yêu cầu. ' +
+                                 'Hai mật khẩu phải trùng nhau!')
+                return redirect('resetPassword')
             
-            
+            # Sau khi đổi pass, phiên đăng nhập -> Kết thúc.
+            # Tự login lại
             username = user.username
-            password = tmp
+            password = temp
             user = authenticate(request, username = username, password = password)
             
             if user is not None:
