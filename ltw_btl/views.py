@@ -241,6 +241,17 @@ def statisticalBook (request):
 def profileUser (request):
     user = request.user
     
+    print("---------ID USER----------")
+    print(user.id)
+    
+    # id_user = user.id
+    # request.session[id_user] = "123456"
+    # request.session[id_user+1] = "1234569"
+    # print("---------ID USER 2s----------")
+    # print(request.session[id_user])
+    # print("---------ID USER 3s----------")
+    # print(request.session[id_user+1])
+    
     form = profileUserForm(instance = user)
     print("FORM profileUser: ", form)
     # print(form)
@@ -304,7 +315,12 @@ def sendMail (request):
         Key_part_2 = random.randrange(100, 999, 1)
         key = str(Key_part_1) + str(Key_part_2)
         
-        request.session['key'] = key
+        
+        id_user = str(user.id)
+        request.session[id_user] = key
+        
+        print("----------------- KEY IN SESSION 1----------------")
+        print(request.session[id_user])
         
         msg = "Mã khôi phục mật khẩu: " + key
         print("MSG: ", msg)
@@ -331,10 +347,12 @@ def sendMail (request):
 
 @login_required(login_url='/login/')
 def confirmCodeMail (request):
+    user = request.user
+    id_user = str(user.id)
     
-    key = request.session['key']
-    print("----------------- KEY IN SESSION ----------------")
-    print(key)
+    key = request.session[id_user]
+    print("----------------- KEY IN SESSION 2----------------")
+    print(request.session[id_user])
     
     #START
     if request.method == "POST":
